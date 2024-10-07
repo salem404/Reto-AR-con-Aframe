@@ -1,7 +1,7 @@
 <div align="center">
   
   <h1 align="center">Reto AR con Aframe</h1>
-  <img src="https://img.shields.io/badge/Asignatura-Realidad_virtual_y_realidad_aumentada-0892b6?style=for-the-badge" alt="Asignatura: Realidad Virtual y Realidad Aumenteada">
+  <img src="https://img.shields.io/badge/Asignatura-Realidad_virtual_y_realidad_aumentada-ecece0?style=for-the-badge" alt="Asignatura: Realidad Virtual y Realidad Aumentada">
 </div>
 
 ## Tabla de contenido
@@ -25,13 +25,13 @@ Este repositorio contiene un proyecto de realidad aumentada con A-Frame. El proy
 ## Pasos a seguir
 
 1. Crear un avatar en [Ready Player Me](https://readyplayer.me/).
-   ![Pantalla de descarga de avatar de Ready Player Me](image.png)
+   ![Pantalla de descarga de avatar de Ready Player Me](assets/image.png)
 2. Exportarlo con textura
    1. Abrir blender y borrar todo lo que tenga la escena.
    2. En Blender, importar el avatar y exportarlo en formato Collada (.dae).
    3. En Blender, borrar todo lo que tenga la escena y volver a importar el avatar, esta vez el archivo Collada.
    4. Exportar el avatar en formato fbx, poniendo Path Mode en Copy y seleccionando la opción de Embebed Textures.
-    ![Path Mode en Copy y Embedded Textures](image-1.png)
+    ![Path Mode en Copy y Embedded Textures](assets/image-1.png)
 3. Animar el avatar con [Mixamo](https://www.mixamo.com/).
    1. Importar el avatar en Mixamo.
    2. Seleccionar la animación deseada.
