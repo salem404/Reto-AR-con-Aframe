@@ -40,3 +40,4 @@ Este repositorio contiene un proyecto de realidad aumentada con A-Frame. El proy
    1. Añadir scrips necesarios
    2. Añadir entidades al gusto
    3. Colocar las entidades en las posiciones deseadas
+   4. Por último, añadir la funcionalidad de AR como en el proyecto de pista.
