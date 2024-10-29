@@ -42,6 +42,17 @@ Este repositorio contiene un proyecto de realidad aumentada con A-Frame. El proy
    1. Añadir scrips necesarios
    2. Añadir entidades al gusto
    3. Colocar las entidades en las posiciones deseadas
-   4. Por último, añadir la funcionalidad de AR como en el proyecto de pista.
-   
       ![alt text](assets/image3.png)
+
+5. Funcionalidad AR
+   1. Usando la versión 1.6.0 de A-Frame, añadir el siguiente código a la etiqueta `<a-scene>`:
+
+      ```html
+      <a-scene
+         xrweb="mode: immersive-ar
+         requiredFeatures:hit-test
+         optionalFeatures: dom-overlay; overlayElement: #overlay"
+         xr-mode-ui="enabled: true; enterAREnabled: true; XRMode: ar;"
+         renderer="colorManagement: true; antialias: true; foveationLevel: 1"
+      >
+      ```

@@ -71,7 +71,11 @@
     </script>
   </head>
   <body>
-    <a-scene>
+    <a-scene  xrweb="mode: immersive-ar; requiredFeatures: hit-test; optionalFeatures: dom-overlay; overlayElement: #overlay"
+    xr-mode-ui="enabled: true; enterAREnabled: true; XRMode: ar;"
+    renderer="colorManagement: true; antialias: true; foveationLevel: 1"
+    
+  >
       <a-camera position="0 1.5 0"></a-camera>
       <a-assets timeout="30000">
         <a-asset-item
