@@ -63,23 +63,40 @@ Este repositorio contiene un proyecto de realidad aumentada con A-Frame. El proy
       ></a-scene>
       ```
 
+      En el caso de que se quiera tener modo VR y AR, cambiar `XRMode: ar;` por `XRMode: xr;`
+
 ## Extra
 
 - Añadir overlay:
 
-   ````html
-   <div 
-   id="overlay" 
-   style="position: relative; z-index: 2;"
-   >
-      [content]
-   </div>
-   ````
+  ```html
+  <div id="overlay" style="position: relative; z-index: 2;">[content]</div>
+  ```
 
 - Añadir controles de manos:
 
-   ```html
-   <a-entity hand-tracking-controls="hand: left"></a-entity>
-   <a-entity hand-tracking-controls="hand: right"></a-entity>
-   ```
+  ```html
+  <a-entity hand-tracking-controls="hand: left"></a-entity>
+  <a-entity hand-tracking-controls="hand: right"></a-entity>
+  ```
 
+- Añadir mandos VR:
+
+  ```html
+  <a-entity id="rig" position="0 0 0">
+    <a-camera
+      position="0 1.5 0"
+      look-controls
+      wasd-controls-enabled="true"
+    ></a-camera>
+    <!-- VR Controllers -->
+    <a-entity
+      laser-controls="hand: left"
+      raycaster="objects: .clickable"
+    ></a-entity>
+    <a-entity
+      laser-controls="hand: right"
+      raycaster="objects: .clickable"
+    ></a-entity>
+  </a-entity>
+  ```
