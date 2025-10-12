@@ -28,7 +28,6 @@
     </script>
     <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
     <script src="https://unpkg.com/@c-frame/aframe-particle-system-component@1.2.x/dist/aframe-particle-system-component.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aframe-simple-sun-sky@^1.2.2/simple-sun-sky.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.0/dist/aframe-extras.min.js"></script>
     <script>
       // Define a few custom components useful for AR mode. While these are somewhat reusable,
@@ -51,44 +50,6 @@
             })
             this.el.sceneEl.addEventListener("exit-vr", (ev) => {
               if (this.wasVisible) this.el.setAttribute("visible", true)
-            })
-          },
-        })
-      }
-
-      if (!AFRAME.components["ar-shadows"]) {
-        AFRAME.registerComponent("ar-shadows", {
-          // Swap an object's material to a transparent shadows-only material while
-          // in AR mode. Intended for use with a ground plane. The object is also
-          // set visible while in AR mode, this is useful if it's hidden in other
-          // modes due to them using a 3D environment.
-          schema: {
-            opacity: { default: 0.3 },
-          },
-          init: function () {
-            this.el.sceneEl.addEventListener("enter-vr", (ev) => {
-              this.wasVisible = this.el.getAttribute("visible")
-              if (this.el.sceneEl.is("ar-mode")) {
-                // Add null check to prevent crashes
-                if (
-                  this.el.object3D.children[0] &&
-                  this.el.object3D.children[0].material
-                ) {
-                  this.savedMaterial = this.el.object3D.children[0].material
-                  this.el.object3D.children[0].material =
-                    new THREE.ShadowMaterial()
-                  this.el.object3D.children[0].material.opacity =
-                    this.data.opacity
-                }
-                this.el.setAttribute("visible", true)
-              }
-            })
-            this.el.sceneEl.addEventListener("exit-vr", (ev) => {
-              if (this.savedMaterial && this.el.object3D.children[0]) {
-                this.el.object3D.children[0].material = this.savedMaterial
-                this.savedMaterial = null
-              }
-              if (!this.wasVisible) this.el.setAttribute("visible", false)
             })
           },
         })
@@ -165,14 +126,11 @@
           wasd-controls-enabled="true"
         ></a-camera>
         <!-- VR Controllers -->
-        <a-entity
-          laser-controls="hand: left"
-          raycaster="objects: .clickable"
-        ></a-entity>
-        <a-entity
-          laser-controls="hand: right"
-          raycaster="objects: .clickable"
-        ></a-entity>
+        <a-entity laser-controls="hand: left"></a-entity>
+        <a-entity laser-controls="hand: right"></a-entity>
+        <!-- Hand Tracking -->
+        <a-entity hand-tracking-controls="hand: left"></a-entity>
+        <a-entity hand-tracking-controls="hand: right"></a-entity>
       </a-entity>
       <a-assets timeout="30000">
         <a-asset-item
@@ -221,8 +179,6 @@
         hide-on-enter-ar
         light="type: ambient; color: #ef3e36"
       ></a-entity>
-      <a-entity hand-tracking-controls="hand: left"></a-entity>
-      <a-entity hand-tracking-controls="hand: right"></a-entity>
     </a-scene>
   </body>
 </html>
