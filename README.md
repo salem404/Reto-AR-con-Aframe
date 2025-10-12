@@ -67,9 +67,7 @@ Este repositorio contiene un proyecto de realidad aumentada con A-Frame. El proy
 
      ```html
      <a-scene
-       webxr="requiredFeatures: hit-test,
-       local-floor; 
-       optionalFeatures: dom-overlay; overlayElement: #overlay"
+       webxr="optionalFeatures: hit-test,dom-overlay,local-floor,bounded-floor; overlayElement: #overlay"
        xr-mode-ui="XRMode: ar"
        renderer="colorManagement: true; antialias: true; foveationLevel: 1"
      ></a-scene>
