@@ -30,6 +30,65 @@
     <script src="https://unpkg.com/@c-frame/aframe-particle-system-component@1.2.x/dist/aframe-particle-system-component.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/aframe-simple-sun-sky@^1.2.2/simple-sun-sky.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.0/dist/aframe-extras.min.js"></script>
+    <script src="https://unpkg.com/super-hands@^3.0.3/dist/super-hands.min.js"></script>
+    <script>
+      // Simple gravity component for the sphere
+      AFRAME.registerComponent('simple-gravity', {
+        schema: {
+          velocity: {type: 'vec3', default: {x: 0, y: 0, z: 0}},
+          gravity: {type: 'number', default: -9.8},
+          groundY: {type: 'number', default: 0},
+          bounce: {type: 'number', default: 0.5},
+          enabled: {type: 'boolean', default: true}
+        },
+        
+        init: function() {
+          this.velocity = new THREE.Vector3(
+            this.data.velocity.x, 
+            this.data.velocity.y, 
+            this.data.velocity.z
+          );
+          this.radius = parseFloat(this.el.getAttribute('radius')) || 0.5;
+          console.log('Gravity initialized - radius:', this.radius, 'groundY:', this.data.groundY);
+          
+          // Listen for grab/release events from super-hands
+          this.el.addEventListener('grabbed', () => {
+            this.el.setAttribute('simple-gravity', 'enabled', false);
+          });
+          
+          this.el.addEventListener('released', () => {
+            this.el.setAttribute('simple-gravity', 'enabled', true);
+          });
+        },
+        
+        tick: function(time, deltaTime) {
+          if (!deltaTime || !this.data.enabled) return;
+          
+          const dt = Math.min(deltaTime / 1000, 0.1); // Cap delta time, convert to seconds
+          const position = this.el.object3D.position;
+          
+          // Apply gravity
+          this.velocity.y += this.data.gravity * dt;
+          
+          // Update position
+          position.x += this.velocity.x * dt;
+          position.y += this.velocity.y * dt;
+          position.z += this.velocity.z * dt;
+          
+          // Check ground collision
+          const minY = this.data.groundY + this.radius;
+          if (position.y <= minY) {
+            position.y = minY;
+            this.velocity.y = Math.abs(this.velocity.y) * this.data.bounce;
+            
+            // Stop bouncing when velocity is very small
+            if (this.velocity.y < 0.01) {
+              this.velocity.y = 0;
+            }
+          }
+        }
+      });
+    </script>
     <script>
       // Define a few custom components useful for AR mode. While these are somewhat reusable,
       // I recommend checking if there are officially supported alternatives before copying
@@ -138,20 +197,33 @@
       xr-mode-ui="XRMode: xr"
       renderer="colorManagement: true; antialias: true; foveationLevel: 1"
     >
-      <a-entity id="rig" position="0 0 0">
+      <a-entity id="rig" position="0 0 0" movement-controls="fly: false; speed: 0.1">
         <a-camera
           position="0 1.5 0"
           look-controls
-          wasd-controls-enabled="true"
         ></a-camera>
-        <!-- VR Controllers -->
+        <!-- VR Controllers with super-hands for grabbing -->
         <a-entity
+          id="leftHand"
+          hand-controls="hand: left; handModelStyle: lowPoly; color: #ffcccc"
           laser-controls="hand: left"
-          raycaster="objects: .clickable"
+          raycaster="objects: .clickable, .teleportable"
+          blink-controls="cameraRig: #rig; teleportOrigin: #camera; collisionEntities: .teleportable"
+          super-hands="colliderEvent: raycaster-intersection;
+                       colliderEventProperty: els;
+                       colliderEndEvent: raycaster-intersection-cleared;
+                       colliderEndEventProperty: clearedEls;"
         ></a-entity>
         <a-entity
+          id="rightHand"
+          hand-controls="hand: right; handModelStyle: lowPoly; color: #ffcccc"
           laser-controls="hand: right"
-          raycaster="objects: .clickable"
+          raycaster="objects: .clickable, .teleportable"
+          blink-controls="cameraRig: #rig; teleportOrigin: #camera; collisionEntities: .teleportable"
+          super-hands="colliderEvent: raycaster-intersection;
+                       colliderEventProperty: els;
+                       colliderEndEvent: raycaster-intersection-cleared;
+                       colliderEndEventProperty: clearedEls;"
         ></a-entity>
       </a-entity>
       <a-assets timeout="30000">
@@ -169,6 +241,23 @@
         animation-mixer
         shadow="cast: true; receive: true"
       ></a-entity>
+      
+      <!-- Physics Sphere behind the avatar - grabbable with super-hands -->
+      <a-sphere
+        position="0 2 -2"
+        radius="0.5"
+        color="#4CC3D9"
+        shadow="cast: true; receive: true"
+        simple-gravity="groundY: 0; bounce: 0.8"
+        hoverable
+        grabbable
+        stretchable
+        draggable
+        droppable
+        sphere-collider="objects: .collidable"
+        class="clickable collidable"
+      ></a-sphere>
+      
       <a-plane
         height="15"
         width="15"
@@ -176,7 +265,9 @@
         rotation="-90 0 0"
         shadow="receive: true"
         ar-shadows="opacity: 0.3"
-        visible="false"
+        visible="true"
+        color="#ef3e36"
+        class="collidable teleportable"
       ></a-plane>
       <a-entity light="type: ambient; intensity: 0.5;"></a-entity>
       <a-light
