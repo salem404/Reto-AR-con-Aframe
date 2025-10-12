@@ -9,8 +9,7 @@
       content="xr-spatial-tracking=(self)"
     />
     <style>
-      header {
-        position: relative;
+      #overlay {
         z-index: 2;
       }
     </style>
@@ -67,14 +66,17 @@
           this.el.sceneEl.addEventListener("enter-vr", (ev) => {
             this.wasVisible = this.el.getAttribute("visible")
             if (this.el.sceneEl.is("ar-mode")) {
-              this.savedMaterial = this.el.object3D.children[0].material
-              this.el.object3D.children[0].material = new THREE.ShadowMaterial()
-              this.el.object3D.children[0].material.opacity = this.data.opacity
+              // Add null check to prevent crashes
+              if (this.el.object3D.children[0] && this.el.object3D.children[0].material) {
+                this.savedMaterial = this.el.object3D.children[0].material
+                this.el.object3D.children[0].material = new THREE.ShadowMaterial()
+                this.el.object3D.children[0].material.opacity = this.data.opacity
+              }
               this.el.setAttribute("visible", true)
             }
           })
           this.el.sceneEl.addEventListener("exit-vr", (ev) => {
-            if (this.savedMaterial) {
+            if (this.savedMaterial && this.el.object3D.children[0]) {
               this.el.object3D.children[0].material = this.savedMaterial
               this.savedMaterial = null
             }
