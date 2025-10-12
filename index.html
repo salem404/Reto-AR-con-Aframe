@@ -31,52 +31,6 @@
     <script src="https://cdn.jsdelivr.net/npm/aframe-simple-sun-sky@^1.2.2/simple-sun-sky.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.0/dist/aframe-extras.min.js"></script>
     <script>
-      // Simple gravity component for the sphere
-      AFRAME.registerComponent('simple-gravity', {
-        schema: {
-          velocity: {type: 'vec3', default: {x: 0, y: 0, z: 0}},
-          gravity: {type: 'number', default: -9.8},
-          groundY: {type: 'number', default: 0},
-          bounce: {type: 'number', default: 0.5}
-        },
-        
-        init: function() {
-          this.velocity = new THREE.Vector3(
-            this.data.velocity.x, 
-            this.data.velocity.y, 
-            this.data.velocity.z
-          );
-        },
-        
-        tick: function(time, deltaTime) {
-          if (!deltaTime) return;
-          
-          const dt = deltaTime / 1000; // Convert to seconds
-          const position = this.el.object3D.position;
-          
-          // Apply gravity
-          this.velocity.y += this.data.gravity * dt;
-          
-          // Update position
-          position.x += this.velocity.x * dt;
-          position.y += this.velocity.y * dt;
-          position.z += this.velocity.z * dt;
-          
-          // Check ground collision
-          const radius = this.el.getAttribute('radius') || 0.5;
-          if (position.y - radius <= this.data.groundY) {
-            position.y = this.data.groundY + radius;
-            this.velocity.y = -this.velocity.y * this.data.bounce;
-            
-            // Stop bouncing when velocity is very small
-            if (Math.abs(this.velocity.y) < 0.1) {
-              this.velocity.y = 0;
-            }
-          }
-        }
-      });
-    </script>
-    <script>
       // Define a few custom components useful for AR mode. While these are somewhat reusable,
       // I recommend checking if there are officially supported alternatives before copying
       // these into new projects.
@@ -139,6 +93,26 @@
           },
         })
       }
+
+      // AR Light Probe component for ambient light estimation
+      if (!AFRAME.components["ar-light-probe"]) {
+        AFRAME.registerComponent("ar-light-probe", {
+          init: function () {
+            this.el.sceneEl.addEventListener("enter-vr", (ev) => {
+              if (this.el.sceneEl.is("ar-mode")) {
+                // Enable light probe in AR mode
+                this.el.setAttribute("visible", true)
+                console.log("AR light estimation enabled")
+              } else {
+                this.el.setAttribute("visible", false)
+              }
+            })
+            this.el.sceneEl.addEventListener("exit-vr", (ev) => {
+              this.el.setAttribute("visible", false)
+            })
+          },
+        })
+      }
     </script>
   </head>
   <body>
@@ -180,7 +154,7 @@
       </header>
     </div>
     <a-scene
-      webxr="optionalFeatures: hit-test,dom-overlay,local-floor,bounded-floor; overlayElement: #overlay"
+      webxr="optionalFeatures: hit-test,dom-overlay,local-floor,bounded-floor,light-estimation; overlayElement: #overlay"
       xr-mode-ui="XRMode: xr"
       renderer="colorManagement: true; antialias: true; foveationLevel: 1"
     >
@@ -215,26 +189,6 @@
         animation-mixer
         shadow="cast: true; receive: true"
       ></a-entity>
-      
-      <!-- Physics Sphere behind the avatar -->
-      <a-sphere
-        position="0 2 -2"
-        radius="0.5"
-        color="#4CC3D9"
-        shadow="cast: true; receive: true"
-        simple-gravity="groundY: 0; bounce: 0.5"
-      ></a-sphere>
-      
-      <a-plane
-        height="15"
-        width="15"
-        position="0 0 -1"
-        rotation="-90 0 0"
-        shadow="receive: true"
-        ar-shadows="opacity: 0.3"
-        visible="true"
-        color="#666"
-      ></a-plane>
       <a-entity light="type: ambient; intensity: 0.5;"></a-entity>
       <a-light
         type="directional"
@@ -249,6 +203,8 @@
         target="avatar"
         position="-5 3 1.5"
       ></a-light>
+      <!-- AR Light Probe for ambient lighting estimation -->
+      <a-entity light="type: probe; intensity: 1" ar-light-probe></a-entity>
       <a-entity
         id="rain"
         particle-system="preset: rain; color: #2e282a; particleCount: 500"
