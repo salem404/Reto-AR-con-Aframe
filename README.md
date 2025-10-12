@@ -80,7 +80,7 @@ Este repositorio contiene un proyecto de realidad aumentada con A-Frame. El proy
 - Añadir overlay:
 
   ```html
-  <div id="overlay" style="position: relative; z-index: 2;">[content]</div>
+  <div id="overlay" style="z-index: 2;">[content]</div>
   ```
 
 - Añadir controles de manos:
