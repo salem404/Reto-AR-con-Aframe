@@ -51,19 +51,31 @@ Este repositorio contiene un proyecto de realidad aumentada con A-Frame. El proy
 
 5. Funcionalidad AR
 
-   1. Usando la versión 1.6.0 de A-Frame, añadir el siguiente código a la etiqueta `<a-scene>`:
+   - Usando la versión 1.6.0 de A-Frame, añadir el siguiente código a la etiqueta `<a-scene>`:
 
-      ```html
-      <a-scene
-        xrweb="mode: immersive-ar
-         requiredFeatures:hit-test
-         optionalFeatures: dom-overlay; overlayElement: #overlay"
-        xr-mode-ui="enabled: true; enterAREnabled: true; XRMode: ar;"
-        renderer="colorManagement: true; antialias: true; foveationLevel: 1"
-      ></a-scene>
-      ```
+     ```html
+     <a-scene
+       xrweb="mode: immersive-ar
+        requiredFeatures:hit-test
+        optionalFeatures: dom-overlay; overlayElement: #overlay"
+       xr-mode-ui="enabled: true; enterAREnabled: true; XRMode: ar;"
+       renderer="colorManagement: true; antialias: true; foveationLevel: 1"
+     ></a-scene>
+     ```
 
-      En el caso de que se quiera tener modo VR y AR, cambiar `XRMode: ar;` por `XRMode: xr;`
+   - Usando la versión 1.7.1 de A-Frame, añadir el siguiente código a la etiqueta `<a-scene>`:
+
+     ```html
+     <a-scene
+       webxr="requiredFeatures: hit-test,
+       local-floor; 
+       optionalFeatures: dom-overlay; overlayElement: #overlay"
+       xr-mode-ui="XRMode: ar"
+       renderer="colorManagement: true; antialias: true; foveationLevel: 1"
+     ></a-scene>
+     ```
+
+   En el caso de que se quiera tener botones de modo VR y AR, cambiar `XRMode: ar;` por `XRMode: xr;`
 
 ## Extra
 
